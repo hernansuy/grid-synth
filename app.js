@@ -224,9 +224,15 @@ function scheduler(){
 }
 async function play(){await engine.resume();if(playing)return;playing=true;currentStep=0;totalBar=0;nextNoteTime=engine.ctx.currentTime+.06;schedulerTimer=setInterval(scheduler,25);scheduler();updateTransportUI()}
 function stop(){playing=false;clearInterval(schedulerTimer);schedulerTimer=null;engine.stopAll();stopOrganVoices();currentStep=0;totalBar=0;updateTransportUI()}
+let scopeGain=1,scopeTrails=[];
 function drawScope(){
- const canvas=$('#scope'),g=canvas.getContext('2d'),w=canvas.width,h=canvas.height;g.clearRect(0,0,w,h);g.strokeStyle='#797b76';g.lineWidth=1;g.beginPath();
- if(engine.analyser){const d=new Uint8Array(engine.analyser.fftSize);engine.analyser.getByteTimeDomainData(d);d.forEach((v,i)=>{const x=i/(d.length-1)*w,y=v/255*h;i?g.lineTo(x,y):g.moveTo(x,y)})}else{for(let x=0;x<w;x++){const y=h/2+Math.sin(x*.045)*7+Math.sin(x*.11)*3;x?g.lineTo(x,y):g.moveTo(x,y)}}g.stroke();requestAnimationFrame(drawScope)
+ const canvas=$('#scope'),g=canvas.getContext('2d'),w=canvas.width,h=canvas.height,mid=h/2,t=performance.now()/1000,points=[];g.clearRect(0,0,w,h);
+ g.strokeStyle='rgba(70,73,69,.13)';g.lineWidth=1;for(let x=0;x<=w;x+=w/8){g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke()}for(let y=h/4;y<h;y+=h/4){g.beginPath();g.moveTo(0,y+.5);g.lineTo(w,y+.5);g.stroke()}
+ let live=false;if(engine.analyser){const d=new Uint8Array(engine.analyser.fftSize);engine.analyser.getByteTimeDomainData(d);let peak=0;d.forEach(v=>peak=Math.max(peak,Math.abs(v-128)));if(peak>1.1){live=true;const target=Math.max(1.5,Math.min(6,27/peak));scopeGain+=(target-scopeGain)*.08;d.forEach((v,i)=>points.push([i/(d.length-1)*w,mid+(v-128)*scopeGain]))}}
+ if(!live){const energy=playing?1.15:.88,warp=1+Math.abs(state.deform||0)/36;for(let x=0;x<=w;x+=3){const edge=Math.sin(Math.PI*x/w),y=mid+edge*energy*(Math.sin(x*.052*warp+t*2.1)*16+Math.sin(x*.128-t*1.25)*7+Math.sin(x*.019+t*.55)*5);points.push([x,y])}}
+ scopeTrails.unshift(points.map(([x,y])=>[x,y]));if(scopeTrails.length>5)scopeTrails.pop();const echoColors=['#3978f6','#36b979','#f17f3d','#e5534b'];for(let echo=scopeTrails.length-1;echo>0;echo--){const trail=scopeTrails[echo];g.beginPath();trail.forEach(([x,y],i)=>{const ex=x-echo*3.5,ey=y+(echo%2?echo:-echo)*.8;i?g.lineTo(ex,ey):g.moveTo(ex,ey)});g.globalAlpha=.1+(scopeTrails.length-echo)*.03;g.strokeStyle=echoColors[(echo-1)%echoColors.length];g.lineWidth=1.35+echo*.22;g.stroke()}g.globalAlpha=1;
+ const path=()=>{g.beginPath();points.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y))};const gradient=g.createLinearGradient(0,0,w,0);gradient.addColorStop(0,'#3978f6');gradient.addColorStop(.48,'#36b979');gradient.addColorStop(.78,'#f17f3d');gradient.addColorStop(1,'#e5534b');path();g.strokeStyle='rgba(57,120,246,.2)';g.lineWidth=7;g.stroke();path();g.strokeStyle=gradient;g.lineWidth=2;g.stroke();
+ const head=points[points.length-1];if(head){g.beginPath();g.arc(head[0]-2,head[1],2.7,0,Math.PI*2);g.fillStyle='#e5534b';g.fill()}requestAnimationFrame(drawScope)
 }
 function savePatch(){
  const current=getPatch(),name=current.name+(current.id.startsWith('user-')?'':' EDIT');let p={id:'user-'+Date.now(),name,tag:'CUSTOM',state:clone(state)};userPatches.push(p);selectedPatch=p.id;state.currentPatch=p.id;persist();renderPatches();toast('PATCH SAVED')
