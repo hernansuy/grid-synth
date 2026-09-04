@@ -113,7 +113,7 @@
     document.addEventListener('keyup', e => { const map = {z:48,s:49,x:50,d:51,c:52,v:53,g:54,b:55,h:56,n:57,j:58,m:59,q:60,'2':61,w:62,'3':63,e:64,r:65,'5':66,t:67,'6':68,y:69,'7':70,u:71,i:72}, n = map[e.key.toLowerCase()]; if (n !== undefined) { engine.noteOff(n); held.delete(n); $('#samplerKeyboard [data-note="'+n+'"]')?.classList.remove('down'); } });
     $('#samplerNav')?.addEventListener('click', () => { $('#samplerView').setAttribute('aria-hidden','false'); $('#samplerView').classList.add('sampler-visible'); $('.workspace')?.style.setProperty('display','none'); $('.sidebar')?.style.setProperty('display','none'); });
     $('#samplerBack')?.addEventListener('click', () => { $('#samplerView').setAttribute('aria-hidden','true'); $('#samplerView').classList.remove('sampler-visible'); $('.workspace')?.style.removeProperty('display'); $('.sidebar')?.style.removeProperty('display'); });
-    renderKeys(); renderZones(); engine.setADSR({ attack:.01, decay:.2, sustain:.85, release:.5 });
+    $('#samplerHighKey').value = '71'; renderKeys(); renderZones(); engine.setADSR({ attack:.01, decay:.2, sustain:.85, release:.5 });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
 })();
