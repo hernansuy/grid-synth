@@ -239,7 +239,36 @@ function savePatch(){
 function duplicatePatch(){const p=getPatch(),copy={id:'user-'+Date.now(),name:p.name+' COPY',tag:'CUSTOM',state:clone(state)};userPatches.push(copy);selectedPatch=copy.id;state.currentPatch=copy.id;persist();renderPatches();toast('PATCH DUPLICATED')}
 function deletePatch(){if(!selectedPatch.startsWith('user-')){toast('BUILT-IN PATCH');return}userPatches=userPatches.filter(p=>p.id!==selectedPatch);selectPatch('builtin-grid');toast('PATCH DELETED')}
 function renderAll(){renderPatches();renderDeform();renderSequencer();renderArrangement();renderMixer();renderKnobs();renderKeyboard();syncInputs();updateTransportUI()}
-function switchView(view,scrollId='instrument'){currentView=view;document.body.classList.toggle('organ-mode',view==='organ');$('#organView').setAttribute('aria-hidden',view==='organ'?'false':'true');$$('.nav-link').forEach(x=>x.classList.toggle('active',view==='organ'?x.dataset.view==='organ':x.dataset.scroll===scrollId));if(view==='synth')requestAnimationFrame(()=>document.getElementById(scrollId)?.scrollIntoView())}
+const PERCUSSION_KIT=[
+ {id:'kick',name:'KICK',detail:'LOW / PUNCH',key:'A'},
+ {id:'snare',name:'SNARE',detail:'BODY / SNAP',key:'S'},
+ {id:'closedhat',name:'CLOSED HAT',detail:'TIGHT / SHORT',key:'D'},
+ {id:'clap',name:'CLAP',detail:'HANDS / ROOM',key:'F'},
+ {id:'openhat',name:'OPEN HAT',detail:'AIR / SUSTAIN',key:'G'},
+ {id:'crash',name:'CRASH',detail:'METAL / WIDE',key:'H'},
+ {id:'ride',name:'RIDE',detail:'BELL / FLOW',key:'J'},
+ {id:'tom',name:'TOM',detail:'MID / ROUND',key:'K'},
+ {id:'shaker',name:'SHAKER',detail:'NOISE / TICK',key:'Z'},
+ {id:'cowbell',name:'COWBELL',detail:'VINTAGE / DRY',key:'X'},
+ {id:'clave',name:'CLAVE',detail:'WOOD / CLICK',key:'C'},
+ {id:'rim',name:'RIM',detail:'WOOD / RIMSHOT',key:'V'}
+];
+function percNoise(type,time,duration,frequency,q,level){const c=engine.ctx,buffer=c.createBuffer(1,Math.ceil(c.sampleRate*duration),c.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();source.buffer=buffer;filter.type=type;filter.frequency.setValueAtTime(frequency,time);filter.Q.value=q;source.connect(filter).connect(gain).connect(engine.master);gain.gain.setValueAtTime(.0001,time);gain.gain.exponentialRampToValueAtTime(level,time+.003);gain.gain.exponentialRampToValueAtTime(.0001,time+duration);source.start(time);source.stop(time+duration+.02)}
+async function percussionHit(id){const item=PERCUSSION_KIT.find(x=>x.id===id);if(!item)return;await engine.resume();const c=engine.ctx,t=c.currentTime;$('#percussionLastHit').textContent=item.name;const pad=$('.percussion-pad[data-perc="'+id+'"]');pad?.classList.add('hit');setTimeout(()=>pad?.classList.remove('hit'),100);
+ if(id==='kick'){const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(145,t);o.frequency.exponentialRampToValueAtTime(48,t+.13);g.gain.setValueAtTime(.7,t);g.gain.exponentialRampToValueAtTime(.0001,t+.48);o.connect(g).connect(engine.master);o.start(t);o.stop(t+.5)}
+ else if(id==='tom'){const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(190,t);o.frequency.exponentialRampToValueAtTime(92,t+.16);g.gain.setValueAtTime(.42,t);g.gain.exponentialRampToValueAtTime(.0001,t+.4);o.connect(g).connect(engine.master);o.start(t);o.stop(t+.42)}
+ else if(id==='snare'){percNoise('highpass',t,.25,1300,.5,.34);const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.setValueAtTime(180,t);g.gain.setValueAtTime(.24,t);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g).connect(engine.master);o.start(t);o.stop(t+.2)}
+ else if(id==='clap'){[0,.018,.038].forEach(offset=>percNoise('bandpass',t+offset,.16,1450,1.2,.22))}
+ else if(id==='closedhat')percNoise('highpass',t,.075,6200,.7,.22);
+ else if(id==='openhat')percNoise('highpass',t,.5,5200,.65,.26);
+ else if(id==='crash')percNoise('highpass',t,1.1,3800,.45,.3);
+ else if(id==='ride')percNoise('bandpass',t,.72,5800,1.4,.21);
+ else if(id==='shaker')percNoise('bandpass',t,.18,4200,2.2,.16);
+ else if(id==='cowbell'){[540,815].forEach(freq=>{const o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.value=freq;g.gain.setValueAtTime(.11,t);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g).connect(engine.master);o.start(t);o.stop(t+.2)})}
+ else {const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=id==='clave'?2450:1750;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.0001,t+.075);o.connect(g).connect(engine.master);o.start(t);o.stop(t+.09)}
+}
+function renderPercussion(){const el=$('#percussionPads');if(!el)return;el.innerHTML=PERCUSSION_KIT.map(p=>'<button class="percussion-pad" data-perc="'+p.id+'"><kbd>'+p.key+'</kbd><strong>'+p.name+'</strong><small>'+p.detail+'</small></button>').join('');$$('.percussion-pad').forEach(b=>b.onclick=()=>percussionHit(b.dataset.perc))}
+function switchView(view,scrollId='instrument'){currentView=view;document.body.classList.toggle('organ-mode',view==='organ');document.body.classList.toggle('percussion-mode',view==='percussion');$('#organView').setAttribute('aria-hidden',view==='organ'?'false':'true');$('#percussionView').setAttribute('aria-hidden',view==='percussion'?'false':'true');$$('.nav-link').forEach(x=>x.classList.toggle('active',view==='organ'||view==='percussion'?x.dataset.view===view:x.dataset.scroll===scrollId));if(view==='synth')requestAnimationFrame(()=>document.getElementById(scrollId)?.scrollIntoView())}
 
 $('#playButton').onclick=play;$('#stopButton').onclick=stop;$$('[data-scope-mode]').forEach(b=>b.onclick=()=>setScopeMode(b.dataset.scopeMode));$('#scope').onclick=toggleScopeMode;$('#scope').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleScopeMode()}};
 $('#bpmInput').onchange=e=>{state.bpm=Math.max(60,Math.min(160,+e.target.value||106));persist();syncInputs()};
@@ -253,7 +282,7 @@ $('#copyBar').onclick=()=>{barClipboard=[...currentPattern()];toast('BAR COPIED'
 $('#savePatchTop').onclick=savePatch;$('#duplicatePatch').onclick=duplicatePatch;$('#duplicatePatch2').onclick=duplicatePatch;$('#newPatch').onclick=savePatch;$('#deletePatch').onclick=deletePatch;$('#deletePatch2').onclick=deletePatch;$('#loadPatch').onclick=()=>selectPatch(selectedPatch);$('#resetPatch').onclick=()=>selectPatch('builtin-grid');$('#resetTop').onclick=()=>selectPatch('builtin-grid');
 $('#patchSearch').oninput=e=>renderPatches(e.target.value);$('.patch-filters').onclick=e=>{if(e.target.tagName!=='BUTTON')return;$$('.patch-filters button').forEach(x=>x.classList.toggle('active',x===e.target));renderPatches(e.target.textContent==='ALL'?'':e.target.textContent)};
 $('#advancedToggle').onclick=()=>{const c=$('#advancedContent'),on=c.classList.toggle('open');$('#advancedToggle').textContent=on?'CLOSE':'OPEN'};
-$$('[data-scroll]').forEach(b=>b.onclick=()=>switchView('synth',b.dataset.scroll));$('[data-view="organ"]').onclick=()=>switchView('organ');$('#organLaunch').onclick=()=>currentView==='organ'?switchView('synth','instrument'):switchView('organ');$('#backToGrid').onclick=()=>switchView('synth','instrument');$('.brand').onclick=e=>{e.preventDefault();switchView('synth','instrument')};
+$$('[data-scroll]').forEach(b=>b.onclick=()=>switchView('synth',b.dataset.scroll));$('[data-view="organ"]').onclick=()=>switchView('organ');$('[data-view="percussion"]').onclick=()=>switchView('percussion');$('#organLaunch').onclick=()=>currentView==='organ'?switchView('synth','instrument'):switchView('organ');$('#percussionLaunch').onclick=()=>currentView==='percussion'?switchView('synth','instrument'):switchView('percussion');$('#backToGrid').onclick=()=>switchView('synth','instrument');$('#backToGridFromPercussion').onclick=()=>switchView('synth','instrument');$('.brand').onclick=e=>{e.preventDefault();switchView('synth','instrument')};
 document.addEventListener('click',e=>{if(!e.target.closest('#notePopover,.arp-step,.bass-block'))$('#notePopover').classList.add('hidden')});
 const keyNotes={a:'G',s:'Bb',d:'D',f:'F',g:'G',h:'Bb',j:'D',k:'F'};
 async function manualDown(k){if(!keyNotes[k])return;await engine.resume();const offset=['g','h','j','k'].includes(k)?1:0,n=keyNotes[k]+(state.manualOctave+offset);engine.voice(n,engine.ctx.currentTime,.5,state.playWith);$('[data-key="'+k+'"]')?.classList.add('down')}
@@ -261,6 +290,7 @@ document.addEventListener('keydown',e=>{if(currentView!=='synth'||/INPUT|SELECT|
 document.addEventListener('keyup',e=>{if(currentView==='synth')$('[data-key="'+e.key.toLowerCase()+'"]')?.classList.remove('down')});$('#octDown').onclick=()=>{state.manualOctave=Math.max(1,state.manualOctave-1);persist();renderKeyboard()};$('#octUp').onclick=()=>{state.manualOctave=Math.min(6,state.manualOctave+1);persist();renderKeyboard()};$('#playWith').onchange=e=>{state.playWith=e.target.value;persist()};
 document.addEventListener('keydown',e=>{if(currentView!=='organ'||e.repeat||e.ctrlKey||e.metaKey||e.altKey||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;const note=organNoteForKey(e.key.toLowerCase());if(note){e.preventDefault();organNoteOn(note,$('.organ-key[data-note="'+note+'"]'))}});
 document.addEventListener('keyup',e=>{if(currentView!=='organ')return;const note=organNoteForKey(e.key.toLowerCase());if(note){e.preventDefault();organNoteOff(note)}});
+document.addEventListener('keydown',e=>{if(currentView!=='percussion'||e.repeat||e.ctrlKey||e.metaKey||e.altKey||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;const item=PERCUSSION_KIT.find(x=>x.key.toLowerCase()===e.key.toLowerCase());if(item){e.preventDefault();percussionHit(item.id)}});
 function changeOrganOctave(delta){stopOrganVoices();organData.octave=Math.max(-2,Math.min(2,(organData.octave||0)+delta));persistOrgan();renderOrganKeyboard();$('#organLastNote').textContent='—';toast('KEYBOARD '+$('#organOctaveOutput').textContent)}
 $('#organOctDown').onclick=()=>changeOrganOctave(-1);$('#organOctUp').onclick=()=>changeOrganOctave(1);$('#organLoadScore').onclick=loadScoreChords;$('#organRecord').onclick=()=>organRecording?stopOrganRecording():startOrganRecording();$('#organPlayTake').onclick=playOrganTake;$('#organStopTake').onclick=()=>{stopOrganRecording();stopOrganTake()};$('#organClearTake').onclick=()=>{stopOrganRecording();stopOrganTake();organData.take=[];organData.takeBpm=null;organData.clip=null;state.organClip=null;persistOrgan();persist();renderOrganRoll();$('#organClock').textContent='00:00.0';toast('TAKE CLEARED')};$('#organMount').onclick=mountOrganTake;$('#organLoop').onchange=e=>{organData.loop=e.target.checked;persistOrgan()};$('#organVolume').oninput=e=>{organData.volume=+e.target.value;$('#organVolumeOutput').textContent=organData.volume+'%';persistOrgan()};$('#organReverb').oninput=e=>{organData.reverb=+e.target.value;$('#organReverbOutput').textContent=organData.reverb+'%';persistOrgan()};
 /* Vintage meter pass: slower decay, clear segments and retained peaks. */
@@ -287,6 +317,6 @@ function drawEqScope(g,w,h,time){
  }
  g.fillStyle='#758071';g.font="7px 'DM Mono'";g.textAlign='center';[['63',1],['250',6],['1K',12],['4K',18],['16K',23]].forEach(([label,i])=>g.fillText(label,pad+i*(barW+gap)+barW/2,h-2))
 }
-bindKnob($('[data-param="deform"]'));renderAll();renderOrgan();renderScopeMode();drawScope();
+bindKnob($('[data-param="deform"]'));renderAll();renderOrgan();renderPercussion();renderScopeMode();drawScope();
 })();
 
