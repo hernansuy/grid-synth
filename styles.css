@@ -32,5 +32,18 @@ button:active{transform:translateY(1px)}input[type=range]{accent-color:var(--ink
 
 @media(max-width:1150px){.workspace{width:calc(100% - 220px)}.organ-mode .organ-workspace{width:calc(100% - 220px)}.organ-keyboard{height:190px}}
 @media(max-width:760px){.workspace,.organ-mode .organ-workspace{width:100%}.organ-workspace>*{width:100%}.organ-keyboard{height:165px}}
+
+.organ-presets{max-height:230px;margin:10px 0 12px;overflow:auto;scrollbar-width:thin;scrollbar-color:#5b5d57 #242522}
+.organ-preset{min-height:38px;padding-right:6px}
+.organ-control{margin:10px 0}
+.register-note{margin-top:14px}
+.organ-zone{padding:14px 0 4px;border-top:1px solid #484944;border-bottom:1px solid #484944;color:#a6a7a1;font:8px 'DM Mono'}
+.organ-zone>span,.organ-zone small{display:block;letter-spacing:.08em}
+.organ-zone>div{display:grid;grid-template-columns:32px 1fr 32px;align-items:center;gap:6px;margin:9px 0 7px}
+.organ-zone button{height:29px;border:1px solid #555750;background:#30312e;color:#f3f0e8;font:17px 'DM Mono'}
+.organ-zone button:hover:not(:disabled){border-color:var(--orange);color:var(--orange)}
+.organ-zone button:disabled{opacity:.3;cursor:not-allowed}
+.organ-zone output{text-align:center;color:#fff;font:10px 'DM Mono'}
+.organ-zone small{color:#70726c;font-size:7px;text-align:center}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
