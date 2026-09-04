@@ -45,5 +45,13 @@ button:active{transform:translateY(1px)}input[type=range]{accent-color:var(--ink
 .organ-zone button:disabled{opacity:.3;cursor:not-allowed}
 .organ-zone output{text-align:center;color:#fff;font:10px 'DM Mono'}
 .organ-zone small{color:#70726c;font-size:7px;text-align:center}
+.display-visual-head{height:21px;display:flex;align-items:center;justify-content:space-between}
+.display-layers{height:auto!important}
+.scope-modes{display:flex;gap:2px}
+.scope-modes button{height:18px;padding:0 7px;border:1px solid #bfc0ba;background:#dedfd9;color:#777974;font:7px 'DM Mono';letter-spacing:.08em}
+.scope-modes button.active{background:#242722;border-color:#242722;color:#efc75e}
+#scope{background:#171a16;cursor:pointer;transition:filter .2s ease}
+#scope:hover{filter:brightness(1.06)}
+#scope:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
