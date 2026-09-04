@@ -22,7 +22,8 @@ La idea inicial nació del deseo de crear una experiencia musical y visual inspi
 - Secuenciador de 16 pasos y arreglos multipista.
 - Presets editables, controles de sonido y efectos.
 - Preset armónico inspirado en la estructura de *Veridis Quo*.
-- Órgano polifónico con seis registros.
+- Banco polifónico con 14 instrumentos: órganos, pianos, pianos eléctricos y timbres híbridos.
+- Teclado desplazable por cinco zonas, desde C1–C3 hasta C5–C7.
 - Interpretación mediante ratón o teclado físico.
 - Grabación de tomas, reproducción en loop y cuantización.
 - Montaje de tomas del órgano dentro del arreglo principal.
@@ -32,7 +33,7 @@ La idea inicial nació del deseo de crear una experiencia musical y visual inspi
 
 ![Órgano polifónico y grabador de tomas](assets/grid-synth-organ.png)
 
-La expansión ORGAN incluye seis registros, dos octavas, interpretación polifónica y un grabador que conserva nota, duración y timing. Las tomas pueden reproducirse en loop, cuantizarse y añadirse al arreglo principal.
+La expansión ORGAN incluye 14 registros —desde órganos y pianos suaves hasta pianos metálicos y voces híbridas—, dos octavas visibles y cinco zonas de interpretación. El grabador conserva nota, duración y timing; las tomas pueden reproducirse en loop, cuantizarse y añadirse al arreglo principal.
 
 ## Ejecutar localmente
 
