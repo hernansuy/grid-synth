@@ -10,6 +10,12 @@ Grid Synth combina una estación de síntesis modular con una interfaz clara ins
 
 La aplicación funciona completamente en el navegador mediante Web Audio API. Los patches, ajustes y tomas se guardan localmente.
 
+## Sobre el proyecto
+
+Grid Synth es uno de los primeros proyectos que comparto aquí. Lo desarrollo como hobby y como espacio de experimentación, por lo que puede contener errores y todavía tiene mucho margen de mejora.
+
+La idea inicial nació del deseo de crear una experiencia musical y visual inspirada en el universo digital de *Tron*.
+
 ## Funciones
 
 - Sintetizador de cinco capas: arpegio, bajo, cuerdas, staccato y brass.
