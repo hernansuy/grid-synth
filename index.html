@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f1f0eb">
-  <title>Grid Synth — Interactive Musical Synthesizer</title><link rel="stylesheet" href="styles.css?v=2.8.4">
+  <title>Grid Synth — Interactive Musical Synthesizer</title><link rel="stylesheet" href="styles.css?v=2.9.0">
 </head>
 <body><div class="app-shell">
 <header class="topbar"><a class="brand" href="#"><span class="dot-grid"></span><span>GRID SYNTH</span><small>v2.5</small></a><nav class="nav"><button class="nav-link active" data-scroll="instrument">SYNTH</button><button class="nav-link" data-scroll="sequencer">SEQUENCER</button><button class="nav-link" data-scroll="mixer">MIXER</button><button class="nav-link organ-nav" data-view="organ">ORGAN</button><button class="nav-link percussion-nav" data-view="percussion">PERCUSSION</button><button class="nav-link arranger-nav" data-view="arranger">ARRANGER</button><button class="nav-link" data-scroll="advanced">ADVANCED</button></nav><div class="top-actions"><button class="text-btn organ-launch" id="organLaunch">ORGAN</button><button class="text-btn percussion-launch" id="percussionLaunch">DRUMS</button><button class="text-btn arranger-launch" id="arrangerLaunch">MIDI</button><button class="text-btn" id="savePatchTop">SAVE</button><span class="status-dot"></span><span class="tiny">LOCAL</span><button class="icon-btn" id="resetTop">↻</button></div></header>
@@ -39,6 +39,7 @@
       <div class="organ-display"><div><span>REGISTER</span><strong id="organVoiceName">WARM DRAWBARS</strong></div><div><span>LAST NOTE</span><strong id="organLastNote">—</strong></div><div><span>TAKE</span><strong id="organTakeCount">EMPTY</strong></div><div class="drawbars" id="organDrawbars" aria-hidden="true"></div></div>
       <div class="organ-keyboard-wrap"><div id="organKeyboard" class="organ-keyboard" aria-label="Two octave instrument keyboard"></div></div>
       <div class="organ-hints"><span><kbd>Z S X D C…</kbd> LOWER OCTAVE</span><span><kbd>Q 2 W 3 E…</kbd> UPPER OCTAVE</span><span>POLYPHONIC / HOLD KEYS</span></div>
+      <section class="organ-demos"><div class="shaper-head"><h2><i class="power orange"></i>AUTO SONGS</h2><span>SIMPLIFIED PRACTICE ARRANGEMENTS</span></div><div class="demo-actions"><button id="demoVeridis">▶ VERIDIS QUO</button><button id="demoRivers">▶ I FOLLOW RIVERS</button><button id="demoStop">■ STOP</button><span id="demoStatus">READY / SELECT A SONG</span></div></section>
       <section class="organ-shaper"><div class="shaper-head"><h2><i class="power blue"></i>VOICE SHAPER</h2><span>ADJUST THE SELECTED PIANO / ORGAN</span></div><div class="shaper-controls"><label>TONE <output id="organToneOutput">—</output><input id="organToneSlider" type="range" min="900" max="8000" value="4200"></label><label>ATTACK <output id="organAttackOutput">—</output><input id="organAttackSlider" type="range" min="0" max="100" value="10"></label><label>SUSTAIN <output id="organSustainOutput">—</output><input id="organSustainSlider" type="range" min="0" max="100" value="50"></label><label>RELEASE <output id="organReleaseOutput">—</output><input id="organReleaseSlider" type="range" min="0" max="100" value="25"></label><button id="organShaperReset">RESET VOICE</button></div></section>
     </div>
   </section>
@@ -48,5 +49,5 @@
     <div class="recorder-foot"><label>QUANTIZE <select id="organQuantize"><option value="0">OFF / LIVE</option><option value="8">1/8</option><option value="16" selected>1/16</option></select></label><span id="organClipStatus">NOT MOUNTED</span><button id="organClearTake">CLEAR TAKE</button><button id="organMount" class="mount-button">ADD TO ARRANGEMENT →</button></div>
   </section>
 </main></div>
-<div id="notePopover" class="note-popover hidden" role="dialog"></div><div id="toast" class="toast" aria-live="polite"></div><script src="app.js?v=2.8.4"></script></body></html>
+<div id="notePopover" class="note-popover hidden" role="dialog"></div><div id="toast" class="toast" aria-live="polite"></div><script src="app.js?v=2.9.0"></script></body></html>
 
