@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f1f0eb">
-  <title>Grid Synth — Interactive Musical Synthesizer</title><link rel="stylesheet" href="styles.css?v=2.8.0">
+  <title>Grid Synth — Interactive Musical Synthesizer</title><link rel="stylesheet" href="styles.css?v=2.8.1">
 </head>
 <body><div class="app-shell">
 <header class="topbar"><a class="brand" href="#"><span class="dot-grid"></span><span>GRID SYNTH</span><small>v2.5</small></a><nav class="nav"><button class="nav-link active" data-scroll="instrument">SYNTH</button><button class="nav-link" data-scroll="sequencer">SEQUENCER</button><button class="nav-link" data-scroll="mixer">MIXER</button><button class="nav-link organ-nav" data-view="organ">ORGAN</button><button class="nav-link percussion-nav" data-view="percussion">PERCUSSION</button><button class="nav-link arranger-nav" data-view="arranger">ARRANGER</button><button class="nav-link" data-scroll="advanced">ADVANCED</button></nav><div class="top-actions"><button class="text-btn organ-launch" id="organLaunch">ORGAN</button><button class="text-btn percussion-launch" id="percussionLaunch">DRUMS</button><button class="text-btn arranger-launch" id="arrangerLaunch">MIDI</button><button class="text-btn" id="savePatchTop">SAVE</button><span class="status-dot"></span><span class="tiny">LOCAL</span><button class="icon-btn" id="resetTop">↻</button></div></header>
@@ -22,7 +22,7 @@
 </main>
 <main class="arranger-workspace" id="arrangerView" aria-hidden="true">
   <section class="arranger-titlebar"><div><button id="backToGridFromArranger" class="back-grid">← BACK TO GRID SYNTH</button><span class="eyebrow blue-eyebrow">MASTER TIMELINE · MIDI WORKSTATION</span><h1>ARRANGER / MIDI</h1><p>Unifica sintetizador, órgano y percusión en una sola línea de tiempo.</p></div><div class="arranger-status"><i></i><span id="arrangerStatus">READY</span><b id="arrangerEventCount">0 EVENTS</b></div></section>
-  <section class="arranger-toolbar module"><label class="midi-file"><span>IMPORT MIDI</span><input id="midiFile" type="file" accept=".mid,.midi,audio/midi"><b>CHOOSE .MID</b></label><button id="arrangerPlay" class="arranger-play">▶ PLAY ARRANGEMENT</button><button id="arrangerStop">■ STOP</button><label>QUANTIZE<select id="arrangerQuantize"><option value="0">OFF</option><option value="1">1/16</option><option value="2">1/8</option><option value="4">1/4</option></select></label><button id="arrangerQuantizeButton">QUANTIZE EVENTS</button><button id="arrangerClear" class="danger-text">CLEAR TIMELINE</button></section>
+  <section class="arranger-toolbar module"><label class="midi-file"><span>IMPORT MIDI / WAV</span><input id="midiFile" type="file" accept=".mid,.midi,.wav,.wave,audio/midi,audio/wav"><b>CHOOSE FILE</b></label><button id="arrangerPlay" class="arranger-play">▶ PLAY ARRANGEMENT</button><button id="arrangerStop">■ STOP</button><label>QUANTIZE<select id="arrangerQuantize"><option value="0">OFF</option><option value="1">1/16</option><option value="2">1/8</option><option value="4">1/4</option></select></label><button id="arrangerQuantizeButton">QUANTIZE EVENTS</button><button id="arrangerClear" class="danger-text">CLEAR TIMELINE</button></section>
   <section class="arranger-timeline module"><div class="arranger-track-head"><span>TRACKS</span><span id="arrangerLength">4 BARS</span></div><div id="arrangerTracks"></div></section>
   <section class="arranger-help module"><span>WORKFLOW</span><b>1. Importa un MIDI · 2. Asigna pistas · 3. Cuantiza · 4. Reproduce junto al Grid Synth</b><small>Los archivos MIDI contienen notas y tiempos; Grid Synth asigna los sonidos del navegador.</small></section>
 </main>
@@ -47,5 +47,5 @@
     <div class="recorder-foot"><label>QUANTIZE <select id="organQuantize"><option value="0">OFF / LIVE</option><option value="8">1/8</option><option value="16" selected>1/16</option></select></label><span id="organClipStatus">NOT MOUNTED</span><button id="organClearTake">CLEAR TAKE</button><button id="organMount" class="mount-button">ADD TO ARRANGEMENT →</button></div>
   </section>
 </main></div>
-<div id="notePopover" class="note-popover hidden" role="dialog"></div><div id="toast" class="toast" aria-live="polite"></div><script src="app.js?v=2.8.0"></script></body></html>
+<div id="notePopover" class="note-popover hidden" role="dialog"></div><div id="toast" class="toast" aria-live="polite"></div><script src="app.js?v=2.8.1"></script></body></html>
 
