@@ -83,7 +83,7 @@ class AudioEngine{
   const c=this.ctx;this.master=c.createGain();this.master.gain.value=.55;
   this.comp=c.createDynamicsCompressor();this.comp.threshold.value=-18;this.comp.knee.value=20;this.comp.ratio.value=4;this.comp.attack.value=.005;this.comp.release.value=.25;
   this.limiter=c.createDynamicsCompressor();this.limiter.threshold.value=-3;this.limiter.knee.value=0;this.limiter.ratio.value=20;this.limiter.attack.value=.001;this.limiter.release.value=.08;
-  this.analyser=c.createAnalyser();this.analyser.fftSize=256;this.master.connect(this.comp).connect(this.limiter).connect(this.analyser).connect(c.destination);
+  this.analyser=c.createAnalyser();this.analyser.fftSize=256;this.analyser.smoothingTimeConstant=.78;this.master.connect(this.comp).connect(this.limiter).connect(this.analyser).connect(c.destination);
   this.buildEffects();
   LAYERS.forEach(layer=>{const bus=c.createGain();bus.gain.value=0;bus.connect(this.master);this.buses[layer]=bus;this.sends[layer]={};Object.keys(this.effects).forEach(fx=>{const s=c.createGain();s.gain.value=0;s.connect(this.effects[fx].input);bus.connect(s);this.sends[layer][fx]=s})});
   this.updateAll();
@@ -267,6 +267,22 @@ function drawEqScope(g,w,h,time){
  for(let y=8;y<h-12;y+=12){g.beginPath();g.moveTo(0,y+.5);g.lineTo(w,y+.5);g.stroke()}
  const bars=eqLevels.length,d=new Uint8Array(engine.analyser?.frequencyBinCount||128);if(engine.analyser)engine.analyser.getByteFrequencyData(d);const live=engine.analyser&&d.some(v=>v>2),pad=7,gap=3,areaH=h-14,barW=(w-pad*2-gap*(bars-1))/bars,segments=8,segGap=2,segH=(areaH-segGap*(segments-1))/segments;
  for(let i=0;i<bars;i++){const pos=i/(bars-1),center=Math.floor(Math.pow(pos,1.65)*(d.length-1));let target;if(live){let sum=0,count=0;for(let j=-2;j<=2;j++){sum+=d[Math.max(0,Math.min(d.length-1,center+j))];count++}target=Math.min(1,sum/count/105)}else target=.13+Math.max(0,Math.sin(i*.75+time*.45))*.07+(playing?.07:0);eqLevels[i]+=(target-eqLevels[i])*(target>eqLevels[i]?.2:.045);eqPeaks[i]=Math.max(eqLevels[i],eqPeaks[i]-.004);const x=pad+i*(barW+gap);for(let s=0;s<segments;s++){const threshold=(s+1)/segments,y=areaH-s*(segH+segGap)-segH,on=eqLevels[i]>=threshold,color=s<4?'#36b979':s<6?'#efc75e':s<7?'#f17f3d':'#e5534b';g.fillStyle=on?color:'rgba(101,112,97,.2)';g.fillRect(x,y,barW,segH)}g.fillStyle=eqPeaks[i]>.82?'#e5534b':'#efc75e';g.fillRect(x,Math.max(2,areaH-eqPeaks[i]*areaH),barW,1)}
+ g.fillStyle='#758071';g.font="7px 'DM Mono'";g.textAlign='center';[['63',1],['250',6],['1K',12],['4K',18],['16K',23]].forEach(([label,i])=>g.fillText(label,pad+i*(barW+gap)+barW/2,h-2))
+}
+/* EQ calibration: keep the vintage meter readable without pegging every band. */
+function drawEqScope(g,w,h,time){
+ g.fillStyle='#151914';g.fillRect(0,0,w,h);g.strokeStyle='rgba(117,128,113,.16)';g.lineWidth=1;
+ for(let y=8;y<h-12;y+=12){g.beginPath();g.moveTo(0,y+.5);g.lineTo(w,y+.5);g.stroke()}
+ const bars=eqLevels.length,d=new Uint8Array(engine.analyser?.frequencyBinCount||128);if(engine.analyser)engine.analyser.getByteFrequencyData(d);
+ const live=engine.analyser&&d.some(v=>v>10),pad=7,gap=3,areaH=h-14,barW=(w-pad*2-gap*(bars-1))/bars,segments=8,segGap=2,segH=(areaH-segGap*(segments-1))/segments;
+ for(let i=0;i<bars;i++){
+  const pos=i/(bars-1),center=Math.floor(Math.pow(pos,1.65)*(d.length-1));let target;
+  if(live){let sum=0,count=0;for(let j=-2;j<=2;j++){sum+=d[Math.max(0,Math.min(d.length-1,center+j))];count++}const level=Math.max(0,(sum/count-18)/237);target=Math.min(.76,Math.pow(level,.78)*.76)}
+  else target=.035+Math.max(0,Math.sin(i*.75+time*.25))*.025+(playing?.025:0);
+  eqLevels[i]+=(target-eqLevels[i])*(target>eqLevels[i]?.24:.07);eqPeaks[i]=Math.max(eqLevels[i],eqPeaks[i]-.016);
+  const x=pad+i*(barW+gap);for(let s=0;s<segments;s++){const threshold=(s+1)/segments,y=areaH-s*(segH+segGap)-segH,on=eqLevels[i]>=threshold,color=s<4?'#36b979':s<6?'#efc75e':s<7?'#f17f3d':'#e5534b';g.fillStyle=on?color:'rgba(101,112,97,.2)';g.fillRect(x,y,barW,segH)}
+  g.fillStyle=eqPeaks[i]>.82?'#e5534b':'#efc75e';g.fillRect(x,Math.max(2,areaH-eqPeaks[i]*areaH),barW,1)
+ }
  g.fillStyle='#758071';g.font="7px 'DM Mono'";g.textAlign='center';[['63',1],['250',6],['1K',12],['4K',18],['16K',23]].forEach(([label,i])=>g.fillText(label,pad+i*(barW+gap)+barW/2,h-2))
 }
 bindKnob($('[data-param="deform"]'));renderAll();renderOrgan();renderScopeMode();drawScope();
