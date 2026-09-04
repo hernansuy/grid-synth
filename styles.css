@@ -57,4 +57,5 @@ button:active{transform:translateY(1px)}input[type=range]{accent-color:var(--ink
 #scope:hover{filter:brightness(1.06)}
 #scope:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+.arranger-event.audio{background:var(--red)}
 
