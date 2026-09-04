@@ -44,6 +44,7 @@ let playing=false,currentStep=0,totalBar=0,nextNoteTime=0,schedulerTimer=null,ba
 let currentView='synth';
 const ORGAN_PRESETS=[
  {id:'warm',name:'WARM DRAWBARS',detail:'ORGAN · 8′ + 4′ / SOFT',bars:[8,7,4,2],cutoff:2600,tones:[['sine',1,.54,0],['triangle',2,.27,-3],['sine',.5,.18,2]]},
+ {id:'classic',name:'CLASSIC ORGAN',detail:'ORGAN · STANDARD / CLEAN',bars:[8,6,4,2],cutoff:4200,env:{attack:.012,peak:.17,sustain:.12,decay:.08,release:.12},tones:[['sine',.5,.22,-2],['sine',1,.52,0],['triangle',2,.21,2],['sine',3,.12,-3]]},
  {id:'discovery',name:'DISCOVERY ORGAN',detail:'ORGAN · ROUND / SCORE',bars:[8,8,5,3],cutoff:2200,tones:[['triangle',1,.48,-4],['sine',1,.32,3],['sine',2,.21,0],['sine',.5,.12,0]]},
  {id:'grand',name:'STUDIO GRAND',detail:'PIANO · OPEN / BALANCED',bars:[8,5,3,1],cutoff:6200,env:{attack:.006,peak:.19,sustain:.026,decay:.72,release:.18},tones:[['triangle',1,.58,-2],['sine',2,.24,2],['sine',3,.11,-3],['sine',4,.05,4]]},
  {id:'felt',name:'FELT PIANO',detail:'PIANO · SOFT / INTIMATE',bars:[7,3,2,1],cutoff:3100,env:{attack:.012,peak:.17,sustain:.035,decay:1.15,release:.32},tones:[['triangle',1,.62,0],['sine',2,.18,-4],['sine',3,.07,3]]},
