@@ -20,5 +20,17 @@ button:active{transform:translateY(1px)}input[type=range]{accent-color:var(--ink
 .organ-launch{color:var(--orange);border:1px solid #efb18c!important;padding:7px 10px!important}.organ-mode .sidebar{display:flex}.organ-mode .organ-workspace{margin-left:278px;max-width:none}.organ-mode .organ-launch{background:var(--orange);border-color:var(--orange)!important;color:white}
 @media(max-width:1150px){.organ-mode .organ-workspace{margin-left:220px}}
 @media(max-width:760px){.organ-mode .sidebar{display:none}.organ-mode .organ-workspace{margin-left:0}.organ-launch{display:block}.top-actions{gap:8px}.top-actions .tiny,.top-actions .status-dot{display:none}}
+
+/* Center the instrument in the space beside the patch browser. */
+.workspace{width:calc(100% - 278px);max-width:none}
+.workspace>:not(.context-bar){width:min(100%,1420px);margin-left:auto;margin-right:auto}
+
+/* Keep the organ at a playable console width instead of stretching its keys. */
+.organ-mode .organ-workspace{width:calc(100% - 278px);max-width:none;margin-right:0;padding-left:clamp(18px,3vw,44px);padding-right:clamp(18px,3vw,44px)}
+.organ-workspace>*{width:min(100%,1180px);margin-left:auto;margin-right:auto}
+.organ-keyboard{height:220px}
+
+@media(max-width:1150px){.workspace{width:calc(100% - 220px)}.organ-mode .organ-workspace{width:calc(100% - 220px)}.organ-keyboard{height:190px}}
+@media(max-width:760px){.workspace,.organ-mode .organ-workspace{width:100%}.organ-workspace>*{width:100%}.organ-keyboard{height:165px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
